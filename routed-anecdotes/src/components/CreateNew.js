@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { Redirect } from 'react-router-dom'
 
 const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
+  const [redirect, setRedirect] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -13,8 +15,12 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     })
+    setRedirect('/')
   }
 
+  if(redirect) {
+   return <Redirect to={redirect}></Redirect>
+  }
   return (
     <div>
       <h2>create a new anecdote</h2>
