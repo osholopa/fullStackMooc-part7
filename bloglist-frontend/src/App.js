@@ -7,17 +7,18 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs, addBlog } from './reducers/blogReducer'
 
 
 const App = () => {
   const dispatch = useDispatch()
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-
+  const blogs = useSelector(state => state.blogs)
+  
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -49,38 +50,31 @@ const App = () => {
   const blogFormRef = React.createRef()
 
   const handleLike = async (blog) => {
-    const newObject = {
-      user: blog.user.id,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-    }
-    const id = blog.id
-    const returnedBlog = await blogService.update(id, newObject)
-    setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+    // const newObject = {
+    //   user: blog.user.id,
+    //   likes: blog.likes + 1,
+    //   author: blog.author,
+    //   title: blog.title,
+    //   url: blog.url,
+    // }
+    // const id = blog.id
+    // const returnedBlog = await blogService.update(id, newObject)
+    // setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
   }
 
   const handleRemove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      const id = blog.id
-      await blogService.remove(id)
-      setBlogs(blogs.filter((blog) => blog.id !== id))
-    }
+    // if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+    //   const id = blog.id
+    //   await blogService.remove(id)
+    //   setBlogs(blogs.filter((blog) => blog.id !== id))
+    // }
   }
 
   const createBlog = async (newBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
-      const response = await blogService.create(newBlog)
-      dispatch(
-        setNotification(
-          `a new blog ${newBlog.title} by ${newBlog.author} added`,
-          'info',
-          3
-        )
-      )
-      setBlogs(blogs.concat(response))
+      dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 'info', 3))
+      dispatch(addBlog(newBlog))
     } catch (exception) {
       dispatch(setNotification(exception.message, 'error', 5))
     }
