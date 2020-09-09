@@ -8,14 +8,18 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs, addBlog } from './reducers/blogReducer'
-
+import {
+  initializeBlogs,
+  addBlog,
+  likeBlog,
+  removeBlog,
+} from './reducers/blogReducer'
 
 const App = () => {
   const dispatch = useDispatch()
   const [user, setUser] = useState(null)
-  const blogs = useSelector(state => state.blogs)
-  
+  const blogs = useSelector((state) => state.blogs)
+
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
@@ -50,30 +54,25 @@ const App = () => {
   const blogFormRef = React.createRef()
 
   const handleLike = async (blog) => {
-    // const newObject = {
-    //   user: blog.user.id,
-    //   likes: blog.likes + 1,
-    //   author: blog.author,
-    //   title: blog.title,
-    //   url: blog.url,
-    // }
-    // const id = blog.id
-    // const returnedBlog = await blogService.update(id, newObject)
-    // setBlogs(blogs.map((blog) => (blog.id !== id ? blog : returnedBlog)))
+    dispatch(likeBlog(blog))
   }
 
   const handleRemove = async (blog) => {
-    // if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-    //   const id = blog.id
-    //   await blogService.remove(id)
-    //   setBlogs(blogs.filter((blog) => blog.id !== id))
-    // }
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      dispatch(removeBlog(blog))
+    }
   }
 
   const createBlog = async (newBlog) => {
     try {
       blogFormRef.current.toggleVisibility()
-      dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`, 'info', 3))
+      dispatch(
+        setNotification(
+          `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          'info',
+          3
+        )
+      )
       dispatch(addBlog(newBlog))
     } catch (exception) {
       dispatch(setNotification(exception.message, 'error', 5))
