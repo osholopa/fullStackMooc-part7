@@ -14,14 +14,20 @@ import {
 } from './reducers/blogReducer'
 import { initializeUser, login, logout } from './reducers/loginReducer'
 import { getAllUsers } from './reducers/usersReducer'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import Users from './components/Users'
+import User from './components/User'
 
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
   const blogs = useSelector((state) => state.blogs)
   const users = useSelector(state => state.users)
+
+  const userMatch = useRouteMatch('/users/:id')
+  const userById = userMatch
+    ? users.find(u => u.id === userMatch.params.id)
+    : null
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -79,6 +85,9 @@ const App = () => {
         </div>
       )}
       <Switch>
+        <Route path="/users/:id">
+          <User user={userById}/>
+        </Route>
         <Route path="/users">
           <Users users={users}/>
         </Route>
