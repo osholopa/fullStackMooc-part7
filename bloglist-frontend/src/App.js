@@ -11,6 +11,7 @@ import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
 import Blog from './components/Blog'
+import Menu from './components/Menu'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -35,8 +36,9 @@ const App = () => {
 
   return (
     <div>
+      <Menu />
       <Notification />
-      <h2>blogs</h2>
+      <h2>blog app</h2>
       <LoginForm />
       <Switch>
         <Route path="/users/:id">

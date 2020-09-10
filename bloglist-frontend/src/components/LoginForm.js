@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { login, logout } from '../reducers/loginReducer'
+import { login } from '../reducers/loginReducer'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -8,10 +8,6 @@ const LoginForm = () => {
   const [password, setPassword] = useState('')
 
   const user = useSelector((state) => state.user)
-
-  const handleLogout = () => {
-    dispatch(logout())
-  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -54,15 +50,7 @@ const LoginForm = () => {
         </form>
       </>
     )
-  } else {
-    return (
-      <div>
-        <p>
-          {user.name} logged in <button onClick={handleLogout}>logout</button>
-        </p>
-      </div>
-    )
-  }
+  } else return null
 }
 
 export default LoginForm
