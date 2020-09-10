@@ -26,6 +26,7 @@ export const initializeUser = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      blogService.setToken(user.token)
       dispatch({
         type: 'INITIALIZE',
         data: user,

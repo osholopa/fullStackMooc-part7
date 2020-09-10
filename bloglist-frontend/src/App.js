@@ -1,32 +1,30 @@
 import React, { useEffect } from 'react'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
-import { setNotification } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  initializeBlogs,
-  addBlog,
-  likeBlog,
-  removeBlog,
-} from './reducers/blogReducer'
-import { initializeUser, login, logout } from './reducers/loginReducer'
+import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUser } from './reducers/loginReducer'
 import { getAllUsers } from './reducers/usersReducer'
 import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
+import Blog from './components/Blog'
 
 const App = () => {
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user)
   const blogs = useSelector((state) => state.blogs)
-  const users = useSelector(state => state.users)
+  const users = useSelector((state) => state.users)
 
   const userMatch = useRouteMatch('/users/:id')
   const userById = userMatch
-    ? users.find(u => u.id === userMatch.params.id)
+    ? users.find((u) => u.id === userMatch.params.id)
+    : null
+
+  const blogMatch = useRouteMatch('/blogs/:id')
+  const blogById = blogMatch
+    ? blogs.find((u) => u.id === blogMatch.params.id)
     : null
 
   useEffect(() => {
@@ -35,79 +33,24 @@ const App = () => {
     dispatch(getAllUsers())
   }, [dispatch])
 
-  const handleLogin = (userObject) => {
-    dispatch(login(userObject))
-  }
-
-  const handleLogout = () => {
-    dispatch(logout())
-  }
-
-  const blogFormRef = React.createRef()
-
-  const handleLike = async (blog) => {
-    dispatch(likeBlog(blog))
-  }
-
-  const handleRemove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      dispatch(removeBlog(blog))
-    }
-  }
-
-  const createBlog = async (newBlog) => {
-    try {
-      blogFormRef.current.toggleVisibility()
-      dispatch(
-        setNotification(
-          `a new blog ${newBlog.title} by ${newBlog.author} added`,
-          'info',
-          3
-        )
-      )
-      dispatch(addBlog(newBlog))
-    } catch (exception) {
-      dispatch(setNotification(exception.message, 'error', 5))
-    }
-  }
-
   return (
     <div>
       <Notification />
       <h2>blogs</h2>
-      {user === null ? (
-        <LoginForm handleLogin={handleLogin} />
-      ) : (
-        <div>
-          <p>
-            {user.name} logged in <button onClick={handleLogout}>logout</button>
-          </p>
-        </div>
-      )}
+      <LoginForm />
       <Switch>
         <Route path="/users/:id">
-          <User user={userById}/>
+          <User user={userById} />
         </Route>
         <Route path="/users">
-          <Users users={users}/>
+          <Users users={users} />
+        </Route>
+        <Route path="/blogs/:id">
+          <Blog blog={blogById} />
         </Route>
         <Route path="/">
-          {user ? (
-            <Togglable buttonLabel="new blog" ref={blogFormRef}>
-              <BlogForm createBlog={createBlog} />
-            </Togglable>
-          ) : null}
-          {blogs
-            .sort((a, b) => (a.likes > b.likes ? -1 : 1))
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                user={user}
-                blog={blog}
-                handleLike={handleLike}
-                handleRemove={handleRemove}
-              />
-            ))}
+          <BlogForm />
+          <BlogList />
         </Route>
       </Switch>
     </div>
