@@ -1,17 +1,21 @@
 import React from 'react'
+import { Typography, List, ListItemText } from '@material-ui/core'
+import { Link } from 'react-router-dom'
 
 const User = ({ user }) => {
   if (!user) return null
 
   return (
     <div>
-      <h1>{user.name}</h1>
-      <h3>added blogs</h3>
-      <ul>
+      <Typography variant="h4">{user.name}</Typography>
+      <Typography variant="h6">added blogs:</Typography>
+      <List>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <ListItemText key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </ListItemText>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }

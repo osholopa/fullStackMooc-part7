@@ -1,52 +1,40 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../reducers/loginReducer'
+import { useField } from '../hooks'
+import { Typography, TextField, Button } from '@material-ui/core'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const username = useField('test')
+  const password = useField('password')
 
   const user = useSelector((state) => state.user)
 
   const handleSubmit = (event) => {
     event.preventDefault()
     const userObject = {
-      username,
-      password,
+      username: username.attributes.value,
+      password: password.attributes.value,
     }
     dispatch(login(userObject))
-    setUsername('')
-    setPassword('')
+    username.reset()
+    password.reset()
   }
   if (user === null) {
     return (
       <>
-        <h2>Log in to application</h2>
+        <Typography variant="h6">Log in to application</Typography>
         <form onSubmit={handleSubmit}>
           <div>
-            username
-            <input
-              id="username"
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
+            <TextField label="username" {...username.attributes} />
           </div>
           <div>
-            password
-            <input
-              id="password"
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
+            <TextField label="password" {...password.attributes} />
           </div>
-          <button id="login-button" type="submit">
+          <Button variant="contained" color="primary" type="submit">
             login
-          </button>
+          </Button>
         </form>
       </>
     )

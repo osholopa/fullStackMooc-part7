@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Togglable from './Togglable'
 import { setNotification } from '../reducers/notificationReducer'
 import { addBlog } from '../reducers/blogReducer'
+import { useField } from '../hooks'
+import { Typography, TextField, Button } from '@material-ui/core'
+import SaveIcon from '@material-ui/icons/Save'
 
 const BlogForm = () => {
   const dispatch = useDispatch()
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
   const user = useSelector((state) => state.user)
 
   const blogFormRef = React.createRef()
@@ -33,14 +35,14 @@ const BlogForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     const newBlog = {
-      title: title,
-      author: author,
-      url: url,
+      title: title.attributes.value,
+      author: author.attributes.value,
+      url: url.attributes.value,
     }
     createBlog(newBlog)
-    setAuthor('')
-    setTitle('')
-    setUrl('')
+    author.reset()
+    title.reset()
+    url.reset()
   }
 
   if (!user) return null
@@ -48,41 +50,35 @@ const BlogForm = () => {
   return (
     <>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <h2>create new</h2>
+        <Typography variant="h4">Create new</Typography>
         <form onSubmit={handleSubmit}>
           <div>
-            title
-            <input
-              id="title"
-              type="text"
-              value={title}
-              name="Title"
-              onChange={({ target }) => setTitle(target.value)}
-            />
+            <TextField label="title" {...title.attributes} />
           </div>
           <div>
-            author
-            <input
-              id="author"
-              type="text"
-              value={author}
-              name="Author"
-              onChange={({ target }) => setAuthor(target.value)}
-            />
+            <TextField label="author" {...author.attributes} />
           </div>
           <div>
-            url
-            <input
-              id="url"
-              type="text"
-              value={url}
-              name="Url"
-              onChange={({ target }) => setUrl(target.value)}
-            />
+            <TextField label="url" {...url.attributes} />
           </div>
-          <button id="create-button" type="submit">
-            create
-          </button>
+          <Button
+            startIcon={<SaveIcon />}
+            variant="contained"
+            color="primary"
+            id="create-button"
+            type="submit"
+          >
+            save
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              blogFormRef.current.toggleVisibility()
+            }}
+          >
+            cancel
+          </Button>
         </form>
       </Togglable>
     </>

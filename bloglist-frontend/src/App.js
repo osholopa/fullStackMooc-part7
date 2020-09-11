@@ -12,6 +12,7 @@ import Users from './components/Users'
 import User from './components/User'
 import Blog from './components/Blog'
 import Menu from './components/Menu'
+import { Container, Typography } from '@material-ui/core'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -35,10 +36,10 @@ const App = () => {
   }, [dispatch])
 
   return (
-    <div>
+    <Container>
       <Menu />
       <Notification />
-      <h2>blog app</h2>
+      <Typography variant="h3">Blog app</Typography>
       <LoginForm />
       <Switch>
         <Route path="/users/:id">
@@ -55,7 +56,7 @@ const App = () => {
           <BlogList />
         </Route>
       </Switch>
-    </div>
+    </Container>
   )
 }
 
