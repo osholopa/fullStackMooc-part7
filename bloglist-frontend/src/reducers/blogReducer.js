@@ -48,6 +48,18 @@ export const likeBlog = (blog) => {
   }
 }
 
+export const commentBlog = (id, comment) => {
+  
+  return async (dispatch) => {
+    const commentedBlog = await blogService.comment(id, comment)
+
+    dispatch({
+      type: 'COMMENT_BLOG',
+      data: commentedBlog,
+    })
+  }
+}
+
 const blogReducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT_BLOGS':
@@ -60,7 +72,10 @@ const blogReducer = (state = [], action) => {
       return state.map((blog) =>
         blog.id !== action.data.id ? blog : action.data
       )
-
+    case 'COMMENT_BLOG':
+      return state.map((blog) =>
+        blog.id !== action.data.id ? blog : action.data
+      )
     default:
       return state
   }
