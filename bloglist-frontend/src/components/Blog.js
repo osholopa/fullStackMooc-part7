@@ -15,7 +15,7 @@ const Blog = ({ blog }) => {
   const handleRemove = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       dispatch(removeBlog(blog))
-      history.push("/")
+      history.push('/')
     }
   }
 
@@ -34,6 +34,16 @@ const Blog = ({ blog }) => {
       <p>added by {blog.user.name}</p>
       {user !== null && blog.user.name === user.name ? (
         <button onClick={() => handleRemove(blog)}>remove</button>
+      ) : null}
+      {blog.comments.length > 0 ? (
+        <>
+          <h3>comments</h3>
+          <ul>
+            {blog.comments.map((comment) => (
+              <li key={comment}>{comment}</li>
+            ))}
+          </ul>
+        </>
       ) : null}
     </div>
   )
